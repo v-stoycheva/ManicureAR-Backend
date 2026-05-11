@@ -2,6 +2,7 @@ package com.manicurear.backend.controller;
 
 import com.manicurear.backend.model.ArDesign;
 import com.manicurear.backend.service.ArDesignService;
+import com.manicurear.backend.repository.ArDesignRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,21 +15,19 @@ import java.util.List;
 public class ArDesignController {
 
     private final ArDesignService arDesignService;
+    private final ArDesignRepository arDesignRepository;
 
     @Autowired
-    public ArDesignController(ArDesignService arDesignService) {
+    public ArDesignController(ArDesignService arDesignService, ArDesignRepository arDesignRepository) {
         this.arDesignService = arDesignService;
+        this.arDesignRepository = arDesignRepository;
     }
 
-    /**
-     * Връща списък с всички активни AR дизайни
-     * GET http://localhost:8080/api/ar-designs
-     */
     @GetMapping
     public ResponseEntity<List<ArDesign>> getAllDesigns() {
-        return ResponseEntity.ok(arDesignService.getAllActiveDesigns());
+        // Използваме репозиторито за бърза заявка на активните дизайни
+        return ResponseEntity.ok(arDesignRepository.findAllByIsActiveTrue());
     }
-
     /**
      * Връща дизайни от конкретна категория (напр. само цветове или само форми)
      * GET http://localhost:8080/api/ar-designs/category/{categoryId}
@@ -39,10 +38,6 @@ public class ArDesignController {
         return ResponseEntity.ok(designs);
     }
 
-    /**
-     * Детайли за конкретен дизайн (включително метаданни за ARCore)
-     * GET http://localhost:8080/api/ar-designs/{id}
-     */
     @GetMapping("/{id}")
     public ResponseEntity<ArDesign> getDesignById(@PathVariable Long id) {
         try {
@@ -52,10 +47,6 @@ public class ArDesignController {
         }
     }
 
-    /**
-     * Администраторски метод: добавяне на нов AR дизайн
-     * POST http://localhost:8080/api/ar-designs
-     */
     @PostMapping
     public ResponseEntity<ArDesign> createDesign(@RequestBody ArDesign design) {
         return ResponseEntity.ok(arDesignService.saveDesign(design));

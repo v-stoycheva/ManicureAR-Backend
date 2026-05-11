@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "appointments")
@@ -32,10 +31,10 @@ public class Appointment {
     private ArDesign arDesign;
 
     @Column(nullable = false)
-    private OffsetDateTime startTime;
+    private LocalDateTime startTime;
 
     @Column(nullable = false)
-    private OffsetDateTime endTime;
+    private LocalDateTime endTime;
 
     private String status = "BOOKED"; // 'BOOKED', 'COMPLETED', 'CANCELLED'
 
@@ -48,5 +47,5 @@ public class Appointment {
     private String notes;
 
     @Column(updatable = false)
-    private OffsetDateTime createdAt = OffsetDateTime.now();
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

@@ -92,4 +92,8 @@ public class UserService {
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
+
+    public List<User> getUsersByRole(String roleName) {
+        return userRepository.findByRole_Name(roleName);
+    }
 }

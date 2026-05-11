@@ -1,6 +1,8 @@
 package com.manicurear.backend.controller;
 
 import com.manicurear.backend.model.Appointment;
+import com.manicurear.backend.repository.AppointmentRepository;
+import com.manicurear.backend.repository.ArDesignRepository;
 import com.manicurear.backend.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,10 +17,12 @@ import java.util.List;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
+    private final AppointmentRepository appointmentRepository;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService) {
+    public AppointmentController(AppointmentService appointmentService, AppointmentRepository appointmentRepository) {
         this.appointmentService = appointmentService;
+        this.appointmentRepository = appointmentRepository;
     }
 
     /**
@@ -68,5 +72,15 @@ public class AppointmentController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+    }
+
+    @PutMapping("/{id}/complete")
+    public ResponseEntity<String> completeAppointment(@PathVariable Long id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        appointment.setStatus("COMPLETED");
+        appointmentRepository.save(appointment);
+        return ResponseEntity.ok("Status updated to COMPLETED");
     }
 }

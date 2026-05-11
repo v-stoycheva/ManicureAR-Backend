@@ -1,9 +1,9 @@
 package com.manicurear.backend.repository;
 
-
 import com.manicurear.backend.model.ArDesign;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
-public interface ArDesignRepository extends JpaRepository<ArDesign, Long> { }
+public interface ArDesignRepository extends JpaRepository<ArDesign, Long> {
+    List<ArDesign> findAllByIsActiveTrue();
+}

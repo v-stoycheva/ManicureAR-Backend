@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -51,10 +51,19 @@ public class AppointmentService {
      * Логика за проверка на застъпване (Overlap Detection)
      */
     private boolean isOverlapping(Appointment newApp) {
+        // Изчисляваме края на процедурата на база времетраенето на услугата
+        LocalDateTime calculatedEndTime = newApp.getStartTime()
+                .plusMinutes(newApp.getService().getDurationMinutes());
+
+        newApp.setEndTime(calculatedEndTime); // Автоматично сетваме края
+
+        LocalDateTime startOfDay = newApp.getStartTime().toLocalDate().atStartOfDay();
+        LocalDateTime endOfDay = newApp.getStartTime().toLocalDate().atTime(LocalTime.MAX);
+
         List<Appointment> existingApps = appointmentRepository.findByManicurist_UserIdAndStartTimeBetween(
                 newApp.getManicurist().getUserId(),
-                newApp.getStartTime().minusHours(4), // Гледаме прозорец от време
-                newApp.getEndTime().plusHours(4)
+                startOfDay,
+                endOfDay
         );
 
         return existingApps.stream().anyMatch(existing ->
@@ -86,18 +95,20 @@ public class AppointmentService {
 
     @Transactional
     public void cancelAppointment(Long appointmentId) {
-        Appointment app = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Резервацията не е намерена"));
-        app.setStatus("CANCELLED");
-        appointmentRepository.save(app);
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isAfter(appointment.getStartTime().minusHours(24))) {
+            throw new RuntimeException("Too late to cancel (less than 24 hours).");
+        }
+
+        appointment.setStatus("CANCELLED");
+        appointmentRepository.save(appointment);
     }
 
     // Намиране на всички резервации за конкретен маникюрист
     public List<Appointment> getAppointmentsByManicurist(Long manicuristId) {
-        return appointmentRepository.findByManicurist_UserIdAndStartTimeBetween(
-                manicuristId,
-                OffsetDateTime.now().minusMonths(1),
-                OffsetDateTime.now().plusMonths(1)
-        );
+        return appointmentRepository.findByManicurist_UserId(manicuristId);
     }
 }

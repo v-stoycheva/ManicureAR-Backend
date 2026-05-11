@@ -21,8 +21,8 @@ public class StaffAvailability {
     private User manicurist;
 
     @Column(nullable = false)
-    private OffsetDateTime startTime;
+    private LocalDateTime startTime;
 
     @Column(nullable = false)
-    private OffsetDateTime endTime;
+    private LocalDateTime endTime;
 }
