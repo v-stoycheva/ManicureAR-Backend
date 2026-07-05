@@ -19,38 +19,25 @@ public class UserService {
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        // Инициализираме енкодера за пароли
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    /**
-     * Регистрация на нов потребител с хеширане на паролата.
-     */
     @Transactional
     public User registerUser(User user) {
-        // 1. Проверка дали имейлът вече е зает
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Потребител с този имейл вече съществува!");
+            throw new RuntimeException("A user with this email address already exists!");
         }
 
-        // 2. ХЕШИРАНЕ НА ПАРОЛАТА (Критично за сигурността)
         String encodedPassword = passwordEncoder.encode(user.getPasswordHash());
         user.setPasswordHash(encodedPassword);
 
-        // 3. Запис в базата
         return userRepository.save(user);
     }
 
-    /**
-     * Търсене на потребител по имейл (използва се при Login)
-     */
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    /**
-     * Проверка на паролата при вход (Login логика)
-     */
     public boolean checkPassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
@@ -61,7 +48,7 @@ public class UserService {
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Потребителят не е намерен"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @Transactional

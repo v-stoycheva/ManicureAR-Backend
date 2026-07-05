@@ -17,7 +17,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "*") // Позволява на мобилното приложение да се свързва без проблеми
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserService userService;
@@ -33,10 +33,6 @@ public class UserController {
         this.arDesignRepository = arDesignRepository;
     }
 
-    /**
-     * Регистрация на нов потребител
-     * POST http://localhost:8080/api/users/register
-     */
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody User user) {
         try {
@@ -47,22 +43,14 @@ public class UserController {
         }
     }
 
-    /**
-     * Вход в системата (Опростена версия за момента)
-     * POST http://localhost:8080/api/users/login
-     */
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestParam String email, @RequestParam String password) {
         return userService.findByEmail(email)
                 .filter(user -> userService.checkPassword(password, user.getPasswordHash()))
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(401).build()); // 401 Unauthorized
+                .orElse(ResponseEntity.status(401).build());
     }
 
-    /**
-     * Извличане на данни за конкретен потребител
-     * GET http://localhost:8080/api/users/{id}
-     */
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserProfile(@PathVariable Long id) {
         try {
@@ -72,19 +60,11 @@ public class UserController {
         }
     }
 
-    /**
-     * Списък с всички потребители (за администраторския панел)
-     * GET http://localhost:8080/api/users
-     */
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    /**
-     * Обновяване на профила
-     * PUT http://localhost:8080/api/users/{id}
-     */
     @PutMapping("/{id}")
     public ResponseEntity<User> updateProfile(@PathVariable Long id, @RequestBody User userDetails) {
         try {
@@ -109,15 +89,15 @@ public class UserController {
 
     @PostMapping("/{userId}/favorites/{designId}")
     public ResponseEntity<?> toggleFavorite(@PathVariable Long userId, @PathVariable Long designId) {
-        // 1. Провери дали потребителят съществува
+        // 1. Проверява дали потребителят съществува
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 2. Провери дали дизайнът съществува
+        // 2. Проверява дали дизайнът съществува
         ArDesign design = arDesignRepository.findById(designId)
                 .orElseThrow(() -> new RuntimeException("Design not found"));
 
-        // 3. Критично: Провери дали списъкът е NULL (ако е, инициирай го)
+        // 3. Проверка дали списъкът е NULL (ако е, инициира го)
         if (user.getFavoriteDesigns() == null) {
             user.setFavoriteDesigns(new HashSet<>());
         }
@@ -129,7 +109,7 @@ public class UserController {
             user.getFavoriteDesigns().add(design);
         }
 
-        userRepository.save(user); // Записваме промените в базата
+        userRepository.save(user);
         return ResponseEntity.ok().build();
     }
 

@@ -25,13 +25,9 @@ public class ArDesignController {
 
     @GetMapping
     public ResponseEntity<List<ArDesign>> getAllDesigns() {
-        // Използваме репозиторито за бърза заявка на активните дизайни
         return ResponseEntity.ok(arDesignRepository.findAllByIsActiveTrue());
     }
-    /**
-     * Връща дизайни от конкретна категория (напр. само цветове или само форми)
-     * GET http://localhost:8080/api/ar-designs/category/{categoryId}
-     */
+
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<ArDesign>> getDesignsByCategory(@PathVariable Long categoryId) {
         List<ArDesign> designs = arDesignService.getDesignsByCategory(categoryId);

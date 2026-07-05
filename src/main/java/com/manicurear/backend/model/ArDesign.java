@@ -24,7 +24,7 @@ public class ArDesign {
     private String filePath;
 
     @Column(columnDefinition = "jsonb")
-    private String metadata; // Тук ще пазим специфичните за ARCore данни
+    private String metadata;
 
     private Boolean isActive = true;
 }

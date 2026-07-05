@@ -20,9 +20,6 @@ public class StaffAvailabilityController {
         this.availabilityService = availabilityService;
     }
 
-    /**
-     * GET http://localhost:8080/api/staff-availability/manicurist/{manicuristId}
-     */
     @GetMapping("/manicurist/{manicuristId}")
     public ResponseEntity<List<StaffAvailability>> getManicuristAvailability(@PathVariable Long manicuristId) {
         List<StaffAvailability> availability = availabilityService.getAvailabilityByManicurist(manicuristId);

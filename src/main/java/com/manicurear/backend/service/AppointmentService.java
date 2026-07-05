@@ -24,9 +24,6 @@ public class AppointmentService {
         this.availabilityRepository = availabilityRepository;
     }
 
-    /**
-    *  Основен метод за създаване на резервация с бизнес валидации.
-     *  */
     @Transactional
     public Appointment createAppointment(Appointment appointment) {
 // 1. Проверка дали маникюристът изобщо е на работа в този интервал
@@ -47,9 +44,6 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
-    /**
-     * Логика за проверка на застъпване (Overlap Detection)
-     */
     private boolean isOverlapping(Appointment newApp) {
         // Изчисляваме края на процедурата на база времетраенето на услугата
         LocalDateTime calculatedEndTime = newApp.getStartTime()
@@ -72,9 +66,6 @@ public class AppointmentService {
         );
     }
 
-    /**
-     * Проверка дали часът влиза в работния график на служителя
-     */
     private boolean isManicuristAvailable(Appointment app) {
         return availabilityRepository.findByManicurist_UserId(app.getManicurist().getUserId())
                 .stream()
@@ -84,7 +75,6 @@ public class AppointmentService {
                 );
     }
 
-    // Методи за извличане на данни
     public List<Appointment> getAllAppointments() {
         return appointmentRepository.findAll();
     }
@@ -107,7 +97,6 @@ public class AppointmentService {
         appointmentRepository.save(appointment);
     }
 
-    // Намиране на всички резервации за конкретен маникюрист
     public List<Appointment> getAppointmentsByManicurist(Long manicuristId) {
         return appointmentRepository.findByManicurist_UserId(manicuristId);
     }

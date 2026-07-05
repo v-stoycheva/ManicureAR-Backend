@@ -5,7 +5,7 @@ import com.manicurear.backend.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
-@org.springframework.stereotype.Service // Използваме пълното име, за да не се бърка с твоя модел Service
+@org.springframework.stereotype.Service
 public class ServiceManagementService {
 
     private final ServiceRepository serviceRepository;

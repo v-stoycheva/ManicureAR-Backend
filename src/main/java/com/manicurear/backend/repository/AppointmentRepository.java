@@ -10,12 +10,10 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
-    // Намира всички резервации на клиент
     List<Appointment> findByClient_UserId(Long clientId);
 
     List<Appointment> findByManicurist_UserId(Long manicuristId);
 
-    // Намира резервациите на маникюрист в определен интервал
     List<Appointment> findByManicurist_UserIdAndStartTimeBetween(
             Long manicuristId, LocalDateTime start, LocalDateTime end
     );

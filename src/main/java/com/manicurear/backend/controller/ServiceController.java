@@ -20,19 +20,11 @@ public class ServiceController {
         this.serviceManagementService = serviceManagementService;
     }
 
-    /**
-     * Връща всички предлагани услуги (Ценоразпис)
-     * GET http://localhost:8080/api/services
-     */
     @GetMapping
     public ResponseEntity<List<Service>> getAllServices() {
         return ResponseEntity.ok(serviceManagementService.getAllServices());
     }
 
-    /**
-     * Връща детайли за конкретна услуга
-     * GET http://localhost:8080/api/services/{id}
-     */
     @GetMapping("/{id}")
     public ResponseEntity<Service> getServiceById(@PathVariable Long id) {
         try {
@@ -42,10 +34,6 @@ public class ServiceController {
         }
     }
 
-    /**
-     * Администраторски метод за добавяне на нова услуга
-     * POST http://localhost:8080/api/services
-     */
     @PostMapping
     public ResponseEntity<Service> createService(@RequestBody Service service) {
         return ResponseEntity.ok(serviceManagementService.saveService(service));
