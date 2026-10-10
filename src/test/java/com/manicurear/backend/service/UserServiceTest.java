@@ -1,6 +1,7 @@
 package com.manicurear.backend.service;
 
 import com.manicurear.backend.model.User;
+import com.manicurear.backend.repository.ArDesignRepository;
 import com.manicurear.backend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 public class UserServiceTest {
 
     private UserRepository userRepository;
+    private ArDesignRepository arDesignRepository;
     private UserService userService;
     private BCryptPasswordEncoder passwordEncoder;
     private User mockUser;
@@ -22,7 +24,8 @@ public class UserServiceTest {
     @BeforeEach
     public void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
-        userService = new UserService(userRepository);
+        arDesignRepository = Mockito.mock(ArDesignRepository.class);
+        userService = new UserService(userRepository, arDesignRepository);
         passwordEncoder = new BCryptPasswordEncoder();
 
         mockUser = new User();
@@ -62,7 +65,7 @@ public class UserServiceTest {
             userService.registerUser(mockUser);
         });
 
-        assertEquals("Потребител с този имейл вече съществува!", exception.getMessage());
+        assertEquals("A user with this email address already exists!", exception.getMessage());
         Mockito.verify(userRepository, Mockito.never()).save(any());
     }
 }

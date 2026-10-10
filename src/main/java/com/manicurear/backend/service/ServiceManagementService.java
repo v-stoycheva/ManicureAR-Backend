@@ -21,7 +21,7 @@ public class ServiceManagementService {
 
     public Service getServiceById(Long id) {
         return serviceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Услугата не е намерена"));
+                .orElseThrow(() -> new RuntimeException("The service was not found"));
     }
 
     public Service saveService(Service service) {

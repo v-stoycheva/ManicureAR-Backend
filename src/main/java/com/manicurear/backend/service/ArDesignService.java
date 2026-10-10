@@ -31,7 +31,7 @@ public class ArDesignService {
 
     public ArDesign getDesignById(Long id) {
         return arDesignRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("AR дизайнът не е намерен"));
+                .orElseThrow(() -> new RuntimeException("The AR design was not found"));
     }
 
     public ArDesign saveDesign(ArDesign design) {

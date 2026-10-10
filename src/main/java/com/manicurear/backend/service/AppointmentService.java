@@ -28,12 +28,12 @@ public class AppointmentService {
     public Appointment createAppointment(Appointment appointment) {
 // 1. Проверка дали маникюристът изобщо е на работа в този интервал
         if (!isManicuristAvailable(appointment)) {
-            throw new RuntimeException("Маникюристът не е на работа в избрания интервал.");
+            throw new RuntimeException("The manicurist is not working during this timeframe.");
         }
 
         // 2. Проверка за припокриващи се вече съществуващи резервации
         if (isOverlapping(appointment)) {
-            throw new RuntimeException("Избраният час вече е зает от друг клиент.");
+            throw new RuntimeException("Тhe selected timeframe is unavailable.");
         }
 
         // 3. Изчисляване на крайна цена (ако не е подадена)

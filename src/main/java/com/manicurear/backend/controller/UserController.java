@@ -89,6 +89,16 @@ public class UserController {
 
     @PostMapping("/{userId}/favorites/{designId}")
     public ResponseEntity<?> toggleFavorite(@PathVariable Long userId, @PathVariable Long designId) {
+        try {
+            userService.toggleFavoriteDesign(userId, designId);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+ /*   @PostMapping("/{userId}/favorites/{designId}")
+    public ResponseEntity<?> toggleFavorite(@PathVariable Long userId, @PathVariable Long designId) {
         // 1. Проверява дали потребителят съществува
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -111,7 +121,7 @@ public class UserController {
 
         userRepository.save(user);
         return ResponseEntity.ok().build();
-    }
+    }*/
 
     @GetMapping("/{userId}/favorites")
     public ResponseEntity<Set<ArDesign>> getFavorites(@PathVariable Long userId) {

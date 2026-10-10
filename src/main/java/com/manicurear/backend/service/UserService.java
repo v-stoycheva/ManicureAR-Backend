@@ -1,12 +1,15 @@
 package com.manicurear.backend.service;
 
+import com.manicurear.backend.model.ArDesign;
 import com.manicurear.backend.model.User;
+import com.manicurear.backend.repository.ArDesignRepository;
 import com.manicurear.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,11 +17,13 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ArDesignRepository arDesignRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, ArDesignRepository arDesignRepository) {
         this.userRepository = userRepository;
+        this.arDesignRepository = arDesignRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
@@ -77,6 +82,31 @@ public class UserService {
 
         // 2. Хеширане и запис на новата парола
         user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void toggleFavoriteDesign(Long userId, Long designId) {
+        // 1. Проверява дали потребителят съществува
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 2. Проверява дали дизайнът съществува
+        ArDesign design = arDesignRepository.findById(designId)
+                .orElseThrow(() -> new RuntimeException("Design not found"));
+
+        // 3. Проверка дали списъкът е NULL
+        if (user.getFavoriteDesigns() == null) {
+            user.setFavoriteDesigns(new HashSet<>());
+        }
+
+        // 4. Логика за добавяне/премахване
+        if (user.getFavoriteDesigns().contains(design)) {
+            user.getFavoriteDesigns().remove(design);
+        } else {
+            user.getFavoriteDesigns().add(design);
+        }
+
         userRepository.save(user);
     }
 
